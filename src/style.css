@@ -24,15 +24,15 @@ main {
 
 ul#history{
   position: fixed;
-  width: calc(100vw - 40px);
-  left: 20px;
-  right: 20px;
-  bottom: 50px;
+  width: calc(100vw - 2.2em);
+  left: 1.1em;
+  right: 1.1em;
+  bottom: 2em;
   font-family: "Source Code Pro", monospace;
   font-weight: 100;
   font-size: 1em;
   gap: 0.5em;
-  padding: 0 0 0 2.5em;
+  padding: 0 0 0 0em;
 }
 
 ul#history > li{
@@ -44,8 +44,8 @@ ul#history > li{
 
 div.display {
   position: fixed;
-  width: calc(100vw - 40px);
-  left: 20px;
+  width: 100vw;
+  left: 0px;
   right: 20px;
   bottom: 0;
   display: flex;
