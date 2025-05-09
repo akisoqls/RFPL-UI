@@ -38,7 +38,8 @@ ul#history{
 ul#history > li{
   display: flex;
   gap: 0.5em;
-  height: 1em;
+  height: 1.6em;
+  border-bottom: 1px solid var(--gray);
 }
 
 div.display {

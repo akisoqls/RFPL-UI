@@ -4,8 +4,10 @@ import "./style.css";
 type Command = string[];
 
 let commandHistory: Command[] = [];
+let h = commandHistory.length;
 
 export const initCommandInput = (): void => {
+  showHistory(commandHistory);
   const documentRoot = document.querySelector<HTMLElement>(":root");
   const commandDisplay = document.querySelector<HTMLDivElement>("div#command");
   const input = document.querySelector<HTMLInputElement>("input#command_input");
@@ -35,15 +37,20 @@ export const initCommandInput = (): void => {
     activeChars.forEach((e) => e.classList.add("active"));
   };
 
-  setChar();
-  setCaret();
+  const setValue = (string: string = "") => {
+    input.value = string;
+    setChar();
+    input.selectionStart = input.value.length;
+    input.selectionEnd = input.value.length + 1;
+    setCaret();
+  };
+
+  setValue();
 
   const getCommand = (): Command => {
     const { value } = input;
     if (value === "") return [""];
-    input.value = "";
-    setChar();
-    setCaret();
+    setValue();
     return value.split(" ");
   };
 
@@ -57,6 +64,17 @@ export const initCommandInput = (): void => {
     if (event.key === "Enter") {
       const command = getCommand();
       excCommand(command);
+      h = commandHistory.length;
+    }
+    if (event.key === "ArrowUp" || event.key === "ArrowDown") {
+      h =
+        event.key === "ArrowUp"
+          ? Math.max(h - 1, 0)
+          : event.key === "ArrowDown"
+            ? Math.min(h + 1, commandHistory.length)
+            : h;
+      setValue([...commandHistory, [""]][h].join(" "));
+      event.preventDefault();
     }
   });
 
