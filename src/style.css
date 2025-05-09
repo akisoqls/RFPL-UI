@@ -1,4 +1,85 @@
-h1{
-  font-size: large;
-  color: red;
+@import url('https://fonts.googleapis.com/css2?family=Source+Code+Pro:ital,wght@0,200..900;1,200..900&display=swap');
+
+:root {
+  --gray: #f0f0f0;
+  --caret-color: #000;
+  --caret-pos: 0;
+}
+
+body{
+  display: flex;
+  justify-content: center;
+}
+
+main {
+  max-width: 600px;
+  width: 100%;
+}
+
+#command_input {
+  height: 0;
+  width: 0;
+  display: block;
+}
+
+ul#history{
+  position: fixed;
+  width: calc(100vw - 40px);
+  left: 20px;
+  right: 20px;
+  bottom: 50px;
+  font-family: "Source Code Pro", monospace;
+  font-weight: 100;
+  font-size: 1em;
+  gap: 0.5em;
+  padding: 0 0 0 2.5em;
+}
+
+ul#history > li{
+  display: flex;
+  gap: 0.5em;
+  height: 1em;
+}
+
+div.display {
+  position: fixed;
+  width: calc(100vw - 40px);
+  left: 20px;
+  right: 20px;
+  bottom: 0;
+  display: flex;
+  font-family: "Source Code Pro", monospace;
+  font-weight: 100;
+  font-size: 1em;
+  gap: 0.5em;
+  background-color: var(--gray);
+}
+
+div.display > #command {
+  caret-color: transparent;
+  font-optical-sizing: auto;
+  font-style: normal;
+  display: flex;
+  width: 100%;
+  cursor: text;
+}
+
+div.display > #command > span {
+  display: block;
+  min-width: 0.5em;
+  height: 1.4em;
+}
+
+div.display > #command > span.active {
+  background-color: var(--caret-color);
+  animation: blink 1s steps(4) infinite;
+}
+
+@keyframes blink {
+  0% { 
+    background-color: var(--caret-color);
+   }
+  50% { 
+    background-color: #0000;
+   }
 }

@@ -1,0 +1,3 @@
+import { initCommandInput } from ".";
+
+initCommandInput();

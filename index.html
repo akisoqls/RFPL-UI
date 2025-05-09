@@ -6,7 +6,23 @@
     <title>po test</title>
   </head>
   <body>
-    <h1>hello</h1>
-    <script type="module" src="/src/index.ts"></script>
+    <main>
+      <ul id="history"></ul>
+      <div class="display">
+        <div>&gt;&gt;&gt;</div>
+        <div id="command"></div>
+        <input autocomplete="off" type="text" name="" id="command_input" value="" autofocus />
+      </div>
+      <template id="command_char">
+        <span class="char"></span>
+      </template>
+      <template id="command_history_item">
+        <li>
+          <div class="command"></div>
+        </li>
+      </template>
+    </main>
+
+    <script type="module" src="/src/main.ts"></script>
   </body>
 </html>
