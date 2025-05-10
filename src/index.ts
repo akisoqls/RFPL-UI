@@ -79,6 +79,14 @@ export const initCommandInput = (): void => {
     }
   });
 
+  const onTouchMove = () => input.blur();
+  input.addEventListener("focus", () => {
+    document.addEventListener("touchmove", onTouchMove);
+  });
+  input.addEventListener("blur", () => {
+    document.removeEventListener("touchmove", onTouchMove);
+  });
+
   commandDisplay.addEventListener("click", () => {
     input.focus();
     input.selectionStart = input.value.length;
