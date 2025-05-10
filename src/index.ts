@@ -55,6 +55,7 @@ export const initCommandInput = (): void => {
   };
 
   input.addEventListener("selectionchange", setCaret);
+  input.addEventListener("focus", setCaret);
   input.addEventListener("input", setChar);
   input.addEventListener("blur", () => {
     const chars = Array.from(commandDisplay.querySelectorAll("span"));
@@ -76,6 +77,14 @@ export const initCommandInput = (): void => {
       setValue([...commandHistory, [""]][h].join(" "));
       event.preventDefault();
     }
+  });
+
+  const onTouchMove = () => input.blur();
+  input.addEventListener("focus", () => {
+    document.addEventListener("touchmove", onTouchMove);
+  });
+  input.addEventListener("blur", () => {
+    document.removeEventListener("touchmove", onTouchMove);
   });
 
   commandDisplay.addEventListener("click", () => {
