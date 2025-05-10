@@ -9,8 +9,11 @@
     <main>
       <ul id="history"></ul>
       <div class="display">
-        <div>&gt;</div>
+        <div class="prompt">&gt;</div>
         <div id="command"></div>
+      </div>
+      <div class="display hidden">
+        <div class="prompt">&gt;</div>
         <input autocomplete="off" type="text" name="" id="command_input" value="" autofocus />
       </div>
       <template id="command_char">
@@ -18,6 +21,7 @@
       </template>
       <template id="command_history_item">
         <li>
+          <div>&gt;</div>
           <div class="command"></div>
         </li>
       </template>

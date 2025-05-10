@@ -61,12 +61,12 @@ export const initCommandInput = (): void => {
     chars.forEach((e) => e.classList.remove("active"));
   });
   input.addEventListener("keydown", (event) => {
-    if (event.key === "Enter") {
+    if (event.key === "Enter" && !event.isComposing) {
       const command = getCommand();
       excCommand(command);
       h = commandHistory.length;
     }
-    if (event.key === "ArrowUp" || event.key === "ArrowDown") {
+    if ((event.key === "ArrowUp" || event.key === "ArrowDown") && !event.isComposing) {
       h =
         event.key === "ArrowUp"
           ? Math.max(h - 1, 0)
