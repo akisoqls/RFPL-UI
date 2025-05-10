@@ -55,6 +55,7 @@ export const initCommandInput = (): void => {
   };
 
   input.addEventListener("selectionchange", setCaret);
+  input.addEventListener("focus", setCaret);
   input.addEventListener("input", setChar);
   input.addEventListener("blur", () => {
     const chars = Array.from(commandDisplay.querySelectorAll("span"));

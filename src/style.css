@@ -7,6 +7,10 @@
   --caret-pos: 0;
 }
 
+html{
+  overscroll-behavior-y: none;
+}
+
 body{
   display: flex;
   justify-content: center;
