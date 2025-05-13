@@ -2,6 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <script src="https://unpkg.com/htmx.org@1.9.12"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>po test</title>
   </head>
@@ -21,8 +22,11 @@
       </template>
       <template id="command_history_item">
         <li>
-          <div>&gt;</div>
-          <div class="command"></div>
+          <div class="command_wrap">
+            <div>&gt;</div>
+            <div class="command"></div>
+          </div>
+          <div class="result"></div>
         </li>
       </template>
     </main>

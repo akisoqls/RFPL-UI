@@ -19,7 +19,7 @@ body{
 main {
   max-width: 600px;
   width: 100%;
-  font-size: 1em;
+  font-size: 20px;
 }
 
 ul#history{
@@ -34,10 +34,19 @@ ul#history{
 }
 
 ul#history > li{
+  min-height: 1.6em;
+  color: var(--dark-gray);
+}
+
+ul#history > li > div.command_wrap{
   display: flex;
   gap: 0.5em;
-  height: 1.6em;
   color: var(--dark-gray);
+}
+
+ul#history > li > div.result {
+  color: black;
+  min-height: 1em;
 }
 
 div.display {
@@ -88,6 +97,11 @@ div.display > #command > span.active {
   background-color: var(--caret-color);
   animation: blink 1s steps(4) infinite;
   color: #fff;
+}
+
+div.result > iframe {
+  all: unset;
+  height: fit-content;  
 }
 
 @keyframes blink {

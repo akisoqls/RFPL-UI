@@ -1,0 +1,53 @@
+<!doctype html>
+<body>
+  <div id="clock">
+    <span id="year">--</span><span>/</span><span id="month">--</span><span>/</span
+    ><span id="day">--</span> <span id="hours">--</span><span class="colon">:</span
+    ><span id="minutes">--</span><span class="colon">:</span><span id="seconds">--</span>
+  </div>
+  <style>
+    .colon {
+      visibility: hidden;
+    }
+    .colon.visible {
+      visibility: visible;
+    }
+  </style>
+  <script>
+    let colonVisibility = true;
+    const updateClock = () => {
+      const now = new Date();
+      const formatted = {
+        year: String(now.getFullYear()),
+        month: String(now.getMonth() + 1).padStart(2, "0"),
+        day: String(now.getDate()).padStart(2, "0"),
+        hours: String(now.getHours()).padStart(2, "0"),
+        minutes: String(now.getMinutes()).padStart(2, "0"),
+        seconds: String(now.getSeconds()).padStart(2, "0"),
+        milliseconds: String(now.getMilliseconds()).padStart(2, "0"),
+      };
+
+      document.querySelectorAll(".colon").forEach((element) => {
+        if (now.getSeconds() % 2 === 1) element.classList.remove("visible");
+        if (now.getSeconds() % 2 === 0) element.classList.add("visible");
+      });
+
+      document
+        .querySelectorAll("#year, #month, #day, #hours, #minutes, #seconds, #milliseconds")
+        .forEach((element) => {
+          if (
+            element.id === "year" ||
+            element.id === "month" ||
+            element.id === "day" ||
+            element.id === "hours" ||
+            element.id === "minutes" ||
+            element.id === "seconds"
+          )
+            element.textContent = formatted[element.id];
+        });
+    };
+
+    updateClock();
+    setInterval(updateClock, 10);
+  </script>
+</body>

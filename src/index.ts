@@ -1,13 +1,20 @@
 import "the-new-css-reset/css/reset.css";
 import "./style.css";
+import type { Command, CommandResult } from "./Command";
+import { default as commandIndex } from "./commands/index";
 
-type Command = string[];
+type CalledCommand = {
+  command: string[];
+  result?: CommandResult;
+};
 
-let commandHistory: Command[] = [];
-let h = commandHistory.length;
+let callHistory: CalledCommand[] = [];
+let h = callHistory.length;
 
 export const initCommandInput = (): void => {
-  showHistory(commandHistory);
+  callHistory.forEach((history) => {
+    appendHistory(history);
+  });
   const documentRoot = document.querySelector<HTMLElement>(":root");
   const commandDisplay = document.querySelector<HTMLDivElement>("div#command");
   const input = document.querySelector<HTMLInputElement>("input#command_input");
@@ -47,11 +54,16 @@ export const initCommandInput = (): void => {
 
   setValue();
 
-  const getCommand = (): Command => {
+  const getCommand = (): CalledCommand => {
     const { value } = input;
-    if (value === "") return [""];
+    if (value === "")
+      return {
+        command: [""],
+      };
     setValue();
-    return value.split(" ");
+    return {
+      command: value.split(" "),
+    };
   };
 
   input.addEventListener("selectionchange", setCaret);
@@ -65,16 +77,16 @@ export const initCommandInput = (): void => {
     if (event.key === "Enter" && !event.isComposing) {
       const command = getCommand();
       excCommand(command);
-      h = commandHistory.length;
+      h = callHistory.length;
     }
     if ((event.key === "ArrowUp" || event.key === "ArrowDown") && !event.isComposing) {
       h =
         event.key === "ArrowUp"
           ? Math.max(h - 1, 0)
           : event.key === "ArrowDown"
-            ? Math.min(h + 1, commandHistory.length)
+            ? Math.min(h + 1, callHistory.length)
             : h;
-      setValue([...commandHistory, [""]][h].join(" "));
+      setValue([...callHistory, { command: [""] }][h].command.join(" "));
       event.preventDefault();
     }
   });
@@ -94,23 +106,93 @@ export const initCommandInput = (): void => {
   });
 };
 
-const excCommand = (command: Command) => {
-  commandHistory.push(command);
-  if (command.join(" ") === "clear") commandHistory = [];
-  showHistory(commandHistory);
+const excCommand = async (command: CalledCommand) => {
+  if (command.command.join(" ") === "clear") callHistory = [];
+  const result = await parseCommand(command);
+  callHistory.push({
+    ...command,
+    result,
+  });
+  if (result)
+    appendHistory({
+      ...command,
+      result,
+    });
 };
 
-const showHistory = (history: Command[]) => {
+const parseCommand = async (command: CalledCommand): Promise<CommandResult> => {
+  const [commandName, ...args] = command.command;
+  if (commandName === "") {
+    return {
+      contentType: "text/text",
+      body: ``,
+    };
+  }
+  try {
+    const Command = commandIndex[commandName];
+    if (Command === undefined) throw new Error("command not found");
+    const c = new Command() as Command;
+    return (await c.exec(args)).result;
+  } catch (error) {
+    if (error instanceof Error) {
+      if (
+        error.message === "Command is not a constructor" ||
+        error.message === "command not found"
+      ) {
+        return {
+          contentType: "text/text",
+          body: `command not found: ${commandName}`,
+        };
+      }
+      return {
+        contentType: "text/text",
+        body: `unknown error: ${commandName} \n ${error.message}`,
+      };
+    } else {
+      return {
+        contentType: "text/text",
+        body: `unknown error: ${commandName}`,
+      };
+    }
+  }
+};
+
+const appendHistory = (command: CalledCommand) => {
   const historyEl = document.querySelector<HTMLUListElement>("#history");
   const historyItem = document.querySelector<HTMLTemplateElement>("template#command_history_item");
   if (!historyEl || !historyItem || !("content" in historyItem)) return;
-  historyEl.querySelectorAll("*").forEach((element) => element.remove());
-  history.forEach((command) => {
-    const clone = historyItem.content.cloneNode(true) as DocumentFragment;
-    const li = clone.querySelector<HTMLLIElement>("li");
-    const div = clone.querySelector<HTMLLIElement>("li > div.command");
-    if (!li || !div) return;
-    div.innerText = command.join(" ");
-    historyEl.append(li);
+  const clone = historyItem.content.cloneNode(true) as DocumentFragment;
+  const li = clone.querySelector<HTMLLIElement>("li");
+  const commandElement = clone.querySelector<HTMLLIElement>("li > div.command_wrap > div.command");
+  const resultElement = clone.querySelector<HTMLLIElement>("li > div.result");
+  if (!li || !commandElement || !resultElement) return;
+  commandElement.innerText = command.command.join(" ");
+  if (command.result) {
+    if (command.result.contentType === "text/html") {
+      const shadowRoot = resultElement.attachShadow({ mode: "open" });
+      insertResultHtml(shadowRoot, command.result);
+    } else {
+      resultElement.innerText = command.result ? command.result.body.toString() : "";
+    }
+  }
+  historyEl.append(li);
+};
+
+const insertResultHtml = (element: ShadowRoot, commandResult: CommandResult): ShadowRoot => {
+  if (!commandResult || commandResult.contentType !== "text/html") return element;
+  const resultHtml = commandResult.body;
+  const content = resultHtml.cloneNode(true) as DocumentFragment;
+  const scripts = Array.from(content.querySelectorAll<HTMLScriptElement>("script"));
+  scripts.forEach((oldScript) => {
+    const newScript = document.createElement("script");
+    if (oldScript.src) {
+      newScript.src = oldScript.src;
+    } else {
+      newScript.textContent = oldScript.textContent;
+      const wrapped = `(function(document){${newScript.textContent}})(document);`;
+      new Function("document", wrapped)(element);
+    }
   });
+  element.appendChild(content);
+  return element;
 };
