@@ -117,11 +117,10 @@ const excCommand = async (command: CalledCommand) => {
     ...command,
     result,
   });
-  if (result)
-    appendHistory({
-      ...command,
-      result,
-    });
+  appendHistory({
+    ...command,
+    result,
+  });
 };
 
 const parseCommand = async (command: CalledCommand): Promise<CommandResult> => {
@@ -181,6 +180,7 @@ const appendHistory = (command: CalledCommand) => {
   }
   historyEl.append(li);
 };
+
 const clearHistory = () => {
   const historyEl = document.querySelector<HTMLUListElement>("#history");
   if (!historyEl) return;
