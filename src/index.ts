@@ -107,7 +107,11 @@ export const initCommandInput = (): void => {
 };
 
 const excCommand = async (command: CalledCommand) => {
-  if (command.command.join(" ") === "clear") callHistory = [];
+  if (command.command.join(" ") === "clear") {
+    callHistory = [];
+    clearHistory();
+    return;
+  }
   const result = await parseCommand(command);
   callHistory.push({
     ...command,
@@ -176,6 +180,11 @@ const appendHistory = (command: CalledCommand) => {
     }
   }
   historyEl.append(li);
+};
+const clearHistory = () => {
+  const historyEl = document.querySelector<HTMLUListElement>("#history");
+  if (!historyEl) return;
+  historyEl.querySelectorAll("*").forEach((e) => e.remove());
 };
 
 const insertResultHtml = (element: ShadowRoot, commandResult: CommandResult): ShadowRoot => {
