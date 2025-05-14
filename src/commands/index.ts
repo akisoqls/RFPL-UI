@@ -6,7 +6,13 @@ const commands = {
   [Echo.name.toLowerCase()]: Echo,
   [Time.name.toLowerCase()]: Time,
   [None.name.toLowerCase()]: None,
-  ["null"]: None,
 };
 
-export default commands;
+const alias = {
+  null: None,
+};
+
+export default {
+  ...commands,
+  ...alias,
+};

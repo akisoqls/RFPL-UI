@@ -132,7 +132,7 @@ const parseCommand = async (command: CalledCommand): Promise<CommandResult> => {
     };
   }
   try {
-    const Command = commandIndex[commandName];
+    const Command = (commandIndex as any)[commandName];
     if (Command === undefined) throw new Error("command not found");
     const c = new Command() as Command;
     return (await c.exec(args)).result;
