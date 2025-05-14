@@ -1,8 +1,10 @@
-import { Command, type CommandResult } from "../../Command";
+import { Command, type CommandResult } from "../../../Command";
 
 export class None extends Command {
   commandName: string = "none";
-  public result: CommandResult = null;
+  result: CommandResult = {
+    result: null,
+  };
   public args: string[] | undefined;
 
   constructor() {
@@ -10,7 +12,7 @@ export class None extends Command {
   }
 
   exec(): this {
-    this.result = null;
+    this.result.result = null;
     return this;
   }
 }

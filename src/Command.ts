@@ -5,21 +5,24 @@ export abstract class Command {
   abstract exec(args: string[] | undefined): this | Promise<this>;
 }
 
-export type CommandResult =
-  | {
-      contentType: "text/text";
-      body: string;
-    }
-  | {
-      contentType: "text/html";
-      body: HTMLElement;
-    }
-  | {
-      contentType: "text/json";
-      body: string;
-    }
-  | {
-      contentType: "data";
-      body: Blob;
-    }
-  | null;
+export type CommandResult = {
+  skipHistory?: boolean;
+  result:
+    | {
+        contentType: "text/text";
+        body: string;
+      }
+    | {
+        contentType: "text/html";
+        body: HTMLElement;
+      }
+    | {
+        contentType: "text/json";
+        body: string;
+      }
+    | {
+        contentType: "data";
+        body: Blob;
+      }
+    | null;
+};

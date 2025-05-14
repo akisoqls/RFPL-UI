@@ -1,7 +1,7 @@
 import "./terminal.css";
-import type { Command, CommandResult } from "../Command";
+import { Command, type CommandResult } from "../Command";
 import html from "./terminal.html?raw";
-import { default as commandIndex } from "../commands/index";
+import { default as commandIndex } from "./commands/index";
 
 type CalledCommand = {
   command: string[];
@@ -11,7 +11,8 @@ type CalledCommand = {
 export class Terminal {
   public terminal: string = html;
 
-  private commands = commandIndex;
+  private commands: Record<string, typeof Command> = commandIndex;
+  public defaultCommands: Record<string, typeof Command>;
 
   private terminalDoc: Document;
   private commandDisplay: HTMLDivElement;
@@ -82,6 +83,17 @@ export class Terminal {
       this.input.selectionStart = this.input.value.length;
       this.input.selectionEnd = this.input.value.length;
     });
+
+    this.defaultCommands = {
+      clear: this.Clear,
+      exit: this.Exit,
+    };
+
+    this.commands = {
+      ...this.defaultCommands,
+      ...this.commands,
+    };
+
     return this;
   }
 
@@ -126,28 +138,27 @@ export class Terminal {
   }
 
   private async excCommand(command: CalledCommand): Promise<void> {
-    if (command.command.join(" ") === "clear") {
-      this.callHistory = [];
-      this.clearHistory();
-      return;
+    const result = await this.execCommand(command);
+    if (!result.skipHistory) {
+      this.callHistory.push({
+        ...command,
+        result,
+      });
+      this.appendHistory({
+        ...command,
+        result,
+      });
     }
-    const result = await this.parseCommand(command);
-    this.callHistory.push({
-      ...command,
-      result,
-    });
-    this.appendHistory({
-      ...command,
-      result,
-    });
   }
 
-  private async parseCommand(command: CalledCommand): Promise<CommandResult> {
+  private async execCommand(command: CalledCommand): Promise<CommandResult> {
     const [commandName, ...args] = command.command;
     if (commandName === "") {
       return {
-        contentType: "text/text",
-        body: ``,
+        result: {
+          contentType: "text/text",
+          body: ``,
+        },
       };
     }
     try {
@@ -162,18 +173,24 @@ export class Terminal {
           error.message === "command not found"
         ) {
           return {
-            contentType: "text/text",
-            body: `command not found: ${commandName}`,
+            result: {
+              contentType: "text/text",
+              body: `command not found: ${commandName}`,
+            },
           };
         }
         return {
-          contentType: "text/text",
-          body: `unknown error: ${commandName} \n ${error.message}`,
+          result: {
+            contentType: "text/text",
+            body: `unknown error: ${commandName} \n ${error.message}`,
+          },
         };
       } else {
         return {
-          contentType: "text/text",
-          body: `unknown error: ${commandName}`,
+          result: {
+            contentType: "text/text",
+            body: `unknown error: ${commandName}`,
+          },
         };
       }
     }
@@ -193,28 +210,30 @@ export class Terminal {
     const resultElement = clone.querySelector<HTMLLIElement>("li > div.result");
     if (!li || !commandElement || !resultElement) return;
     commandElement.innerText = command.command.join(" ");
-    if (command.result) {
-      if (command.result.contentType === "text/html") {
+    if (command.result?.result) {
+      if (command.result.result.contentType === "text/html") {
         const shadowRoot = resultElement.attachShadow({ mode: "open" });
         this.insertResultHtml(shadowRoot, command.result);
       } else {
-        resultElement.innerText = command.result ? command.result.body.toString() : "";
+        resultElement.innerText = command.result.result
+          ? command.result.result.body.toString()
+          : "";
       }
     }
     historyEl.append(li);
   }
 
   private clearHistory(): void {
-    const historyEl = this.document.querySelector<HTMLUListElement>("#history");
+    if (!this.root) return;
+    const historyEl = this.root.querySelector<HTMLUListElement>("#history");
     if (!historyEl) return;
+    this.callHistory = [];
     historyEl.querySelectorAll("*").forEach((e) => e.remove());
   }
 
-  public clear = this.clearHistory;
-
   private insertResultHtml(element: ShadowRoot, commandResult: CommandResult): ShadowRoot {
-    if (!commandResult || commandResult.contentType !== "text/html") return element;
-    const resultHtml = commandResult.body;
+    if (!commandResult.result || commandResult.result.contentType !== "text/html") return element;
+    const resultHtml = commandResult.result.body;
     const content = resultHtml.cloneNode(true) as DocumentFragment;
     const scripts = Array.from(content.querySelectorAll<HTMLScriptElement>("script"));
     scripts.forEach((oldScript) => {
@@ -240,4 +259,57 @@ export class Terminal {
     if (!this.root) throw new Error();
     this.root.append(...this.terminalDoc.body.childNodes);
   }
+
+  public close(): void {
+    if (!this.root) throw new Error();
+    this.root.querySelectorAll("*").forEach((element) => element.remove());
+  }
+
+  private Clear = ((terminal: Terminal) => {
+    return class extends Command {
+      args: string[] | undefined = undefined;
+      commandName: string = "clear";
+      result: CommandResult = {
+        result: null,
+      };
+      terminal: Terminal = terminal;
+
+      constructor() {
+        super();
+      }
+
+      exec(): this {
+        this.terminal.clearHistory();
+        this.result = {
+          skipHistory: true,
+          result: null,
+        };
+        return this;
+      }
+    };
+  })(this);
+
+  private Exit = ((terminal: Terminal) => {
+    return class extends Command {
+      args: string[] | undefined = undefined;
+      commandName: string = "exit";
+      result: CommandResult = {
+        result: null,
+      };
+      terminal: Terminal = terminal;
+
+      constructor() {
+        super();
+      }
+
+      exec(): this {
+        terminal.close();
+        this.result = {
+          skipHistory: true,
+          result: null,
+        };
+        return this;
+      }
+    };
+  })(this);
 }

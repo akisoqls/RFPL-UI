@@ -1,10 +1,12 @@
-import { Command, type CommandResult } from "../../Command";
+import { Command, type CommandResult } from "../../../Command";
 import html from "./time.html?raw";
 
 export class Time extends Command {
   commandName: string = "time";
   args: undefined;
-  result: CommandResult = null;
+  result: CommandResult = {
+    result: null,
+  };
   htmlElement: HTMLElement;
 
   constructor() {
@@ -15,7 +17,7 @@ export class Time extends Command {
   async exec(): Promise<this> {
     console.log({ html });
     this.htmlElement.innerHTML = html;
-    this.result = {
+    this.result.result = {
       contentType: "text/html",
       body: this.htmlElement,
     };
