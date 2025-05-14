@@ -1,6 +1,6 @@
-import { Echo } from "./Echo/Echo";
-import { Time } from "./Time/Time";
-import { None } from "./None/None";
+import { Echo } from "./Echo";
+import { Time } from "./Time";
+import { None } from "./None";
 
 const commands = {
   [Echo.name.toLowerCase()]: Echo,
