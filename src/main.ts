@@ -1,3 +1,1 @@
-import { initCommandInput } from ".";
-
-initCommandInput();
+import "./index.ts";
