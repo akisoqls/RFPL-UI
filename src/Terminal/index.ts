@@ -11,7 +11,7 @@ type CalledCommand = {
 export class Terminal {
   public terminal: string = html;
 
-  private commands: Record<string, typeof Command> = commandIndex;
+  public commands: Record<string, typeof Command> = commandIndex;
   public metaCommands: Record<string, typeof Command>;
 
   private terminalDoc: Document;
@@ -47,6 +47,7 @@ export class Terminal {
       clear: this.Clear,
       exit: this.Exit,
       bye: this.Exit,
+      [this.OutCommandIndex.commandName]: this.OutCommandIndex,
     };
 
     this.commands = {
@@ -304,6 +305,35 @@ export class Terminal {
         this.result = {
           skipHistory: true,
           result: null,
+        };
+        return this;
+      }
+    };
+  })(this);
+
+  private OutCommandIndex = ((terminal: Terminal) => {
+    return class extends Command {
+      static override commandName: string = "index";
+      args: string[] | undefined = undefined;
+      result: CommandResult = {
+        result: null,
+      };
+      terminal: Terminal = terminal;
+
+      constructor() {
+        super();
+      }
+
+      exec(): this {
+        this.terminal.clearHistory();
+        const commandIndex = this.terminal.commands;
+        const commandIndexStr = Object.keys(commandIndex).join("\n");
+
+        this.result = {
+          result: {
+            contentType: "text/text",
+            body: commandIndexStr,
+          },
         };
         return this;
       }

@@ -1,7 +1,7 @@
 import { Command, type CommandResult } from "../../Command";
 
 export class None extends Command {
-  commandName: string = "none";
+  static override commandName: string = "none";
   result: CommandResult = {
     result: null,
   };
