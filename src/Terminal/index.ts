@@ -23,6 +23,8 @@ export class Terminal {
   private root: HTMLElement | Document | undefined;
   private document = document;
 
+  public welcomeMessage: string = "";
+
   constructor() {
     const DP = new DOMParser();
     this.terminalDoc = DP.parseFromString(html, "text/html");
@@ -213,6 +215,9 @@ export class Terminal {
     const resultElement = clone.querySelector<HTMLLIElement>("li > div.result");
     if (!li || !commandElement || !resultElement) return;
     commandElement.innerText = command.command.join(" ");
+    if (command.command.length < 1) {
+      li.querySelector(".prompt")?.remove();
+    }
     if (command.result?.result) {
       if (command.result.result.contentType === "text/html") {
         const shadowRoot = resultElement.attachShadow({ mode: "open" });
@@ -257,9 +262,23 @@ export class Terminal {
     return this;
   }
 
+  public setWelcomeMessage(msg: string) {
+    this.welcomeMessage = msg;
+    return this;
+  }
+
   public open(): void {
     if (!this.root) throw new Error();
     this.root.replaceChildren(...this.terminalDoc.body.childNodes);
+    this.appendHistory({
+      command: [],
+      result: {
+        result: {
+          contentType: "text/text",
+          body: this.welcomeMessage,
+        },
+      },
+    });
   }
 
   public close(): void {

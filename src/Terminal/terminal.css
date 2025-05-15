@@ -68,7 +68,6 @@ div.command_input > #command {
   background-color: var(--light-gray);
 }
 
-
 #command_input {
   position: relative;
   height: 1em;
