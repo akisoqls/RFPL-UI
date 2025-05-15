@@ -12,7 +12,7 @@ export class Terminal {
   public terminal: string = html;
 
   private commands: Record<string, typeof Command> = commandIndex;
-  public defaultCommands: Record<string, typeof Command>;
+  public metaCommands: Record<string, typeof Command>;
 
   private terminalDoc: Document;
   private commandDisplay: HTMLDivElement;
@@ -43,7 +43,7 @@ export class Terminal {
     this.setAddEventListener();
     this.setValue();
 
-    this.defaultCommands = {
+    this.metaCommands = {
       clear: this.Clear,
       exit: this.Exit,
       bye: this.Exit,
@@ -51,7 +51,7 @@ export class Terminal {
 
     this.commands = {
       ...this.commands,
-      ...this.defaultCommands,
+      ...this.metaCommands,
     };
 
     return this;
