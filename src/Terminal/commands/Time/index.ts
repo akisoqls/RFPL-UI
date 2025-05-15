@@ -15,7 +15,6 @@ export class Time extends Command {
   }
 
   async exec(): Promise<this> {
-    console.log({ html });
     this.htmlElement.innerHTML = html;
     this.result.result = {
       contentType: "text/html",
