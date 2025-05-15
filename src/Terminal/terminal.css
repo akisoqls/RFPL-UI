@@ -35,8 +35,20 @@ ul#history > li > div.command_wrap{
   color: var(--dark-gray);
 }
 
+div.command {
+  white-space: nowrap;
+  overflow-wrap: break-word;
+}
+
+ul#history > li > div.command_wrap{
+  display: flex;
+  gap: 0.5em;
+  color: var(--dark-gray);
+}
+
 ul#history > li > div.result {
   color: black;
+  overflow-wrap: break-word;
 }
 
 div.command_input {
@@ -63,6 +75,7 @@ div.command_input > #command {
   font-optical-sizing: auto;
   font-style: normal;
   display: flex;
+  flex-wrap: wrap;
   width: 100%;
   cursor: text;
   background-color: var(--light-gray);
@@ -78,7 +91,7 @@ div.command_input > #command {
 
 div.command_input > #command > span {
   display: block;
-  min-width: 0.5em;
+  width: 0.6em;
   height: 1.4em;
 }
 
