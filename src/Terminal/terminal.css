@@ -49,6 +49,7 @@ ul#history > li > div.command_wrap{
 ul#history > li > div.result {
   color: black;
   overflow-wrap: break-word;
+  min-height: 1em;
 }
 
 div.command_input {

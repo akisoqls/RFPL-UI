@@ -219,6 +219,7 @@ export class Terminal {
     if (command.command.length < 1) {
       li.querySelector(".prompt")?.remove();
     }
+    console.log({ r: command });
     if (command.result?.result) {
       if (command.result.result.contentType === "text/html") {
         const shadowRoot = resultElement.attachShadow({ mode: "open" });
@@ -228,6 +229,8 @@ export class Terminal {
           ? command.result.result.body.toString()
           : "";
       }
+    } else {
+      resultElement.remove();
     }
     historyEl.append(li);
   }

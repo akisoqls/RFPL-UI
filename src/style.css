@@ -1,6 +1,7 @@
 main {
-  max-width: 600px;
+  /* max-width: 600px; */
   width: 100%;
+  width: 100vw;
   font-size: 20px;
-  height: 80dvh;
+  height: 100dvh;
 }
