@@ -1,8 +1,8 @@
-import { Command, type CommandResult } from "../../../Command";
+import { Command, type CommandResult } from "../../Command";
 import html from "./time.html?raw";
 
 export class Time extends Command {
-  commandName: string = "time";
+  static commandName: string = "time";
   args: undefined;
   result: CommandResult = {
     result: null,

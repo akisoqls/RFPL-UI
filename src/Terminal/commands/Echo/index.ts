@@ -1,7 +1,7 @@
-import { Command, type CommandResult } from "../../../Command";
+import { Command, type CommandResult } from "../../Command";
 
 export class Echo extends Command {
-  commandName: string = "echo";
+  static commandName: string = "echo";
   args: string[] | undefined = [];
   result: CommandResult = {
     result: null,

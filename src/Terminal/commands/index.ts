@@ -3,9 +3,9 @@ import { Time } from "./Time";
 import { None } from "./None";
 
 const commands = {
-  [Echo.name.toLowerCase()]: Echo,
-  [Time.name.toLowerCase()]: Time,
-  [None.name.toLowerCase()]: None,
+  [Echo.commandName]: Echo,
+  [Time.commandName]: Time,
+  [None.commandName]: None,
 };
 
 const alias = {

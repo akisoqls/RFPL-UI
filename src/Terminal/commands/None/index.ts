@@ -1,4 +1,4 @@
-import { Command, type CommandResult } from "../../../Command";
+import { Command, type CommandResult } from "../../Command";
 
 export class None extends Command {
   commandName: string = "none";

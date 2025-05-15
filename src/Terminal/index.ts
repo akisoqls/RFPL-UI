@@ -1,5 +1,5 @@
 import "./terminal.css";
-import { Command, type CommandResult } from "../Command";
+import { Command, type CommandResult } from "./Command";
 import html from "./terminal.html?raw";
 import { default as commandIndex } from "./commands/index";
 
@@ -38,8 +38,24 @@ export class Terminal {
     this.input = input;
     this.charTemplate = charTemplate;
 
+    this.setAddEventListener();
     this.setValue();
 
+    this.defaultCommands = {
+      clear: this.Clear,
+      exit: this.Exit,
+      bye: this.Exit,
+    };
+
+    this.commands = {
+      ...this.commands,
+      ...this.defaultCommands,
+    };
+
+    return this;
+  }
+
+  private setAddEventListener() {
     this.input.addEventListener("selectionchange", () => {
       this.setCaret(this.input.selectionStart, this.input.selectionEnd);
     });
@@ -48,7 +64,7 @@ export class Terminal {
     });
     this.input.addEventListener("input", this.setChar);
     this.input.addEventListener("blur", () => {
-      const chars = Array.from(commandDisplay.querySelectorAll("span"));
+      const chars = Array.from(this.commandDisplay.querySelectorAll("span"));
       chars.forEach((e) => e.classList.remove("active"));
     });
     this.input.addEventListener("keydown", async (event) => {
@@ -72,29 +88,17 @@ export class Terminal {
 
     const onTouchMove = () => this.input.blur();
     this.input.addEventListener("focus", () => {
-      this.terminalDoc.addEventListener("touchmove", onTouchMove);
+      window.addEventListener("touchmove", onTouchMove);
     });
     this.input.addEventListener("blur", () => {
-      this.terminalDoc.removeEventListener("touchmove", onTouchMove);
+      window.removeEventListener("touchmove", onTouchMove);
     });
 
-    commandDisplay.addEventListener("click", () => {
+    this.commandDisplay.addEventListener("click", () => {
       this.input.focus();
       this.input.selectionStart = this.input.value.length;
       this.input.selectionEnd = this.input.value.length;
     });
-
-    this.defaultCommands = {
-      clear: this.Clear,
-      exit: this.Exit,
-    };
-
-    this.commands = {
-      ...this.defaultCommands,
-      ...this.commands,
-    };
-
-    return this;
   }
 
   private setChar = () => {
@@ -139,16 +143,15 @@ export class Terminal {
 
   private async excCommand(command: CalledCommand): Promise<void> {
     const result = await this.execCommand(command);
-    if (!result.skipHistory) {
-      this.callHistory.push({
-        ...command,
-        result,
-      });
-      this.appendHistory({
-        ...command,
-        result,
-      });
-    }
+    if (result.skipHistory) return;
+    this.callHistory.push({
+      ...command,
+      result,
+    });
+    this.appendHistory({
+      ...command,
+      result,
+    });
   }
 
   private async execCommand(command: CalledCommand): Promise<CommandResult> {
@@ -227,7 +230,6 @@ export class Terminal {
     if (!this.root) return;
     const historyEl = this.root.querySelector<HTMLUListElement>("#history");
     if (!historyEl) return;
-    this.callHistory = [];
     historyEl.querySelectorAll("*").forEach((e) => e.remove());
   }
 
@@ -257,7 +259,7 @@ export class Terminal {
 
   public open(): void {
     if (!this.root) throw new Error();
-    this.root.append(...this.terminalDoc.body.childNodes);
+    this.root.replaceChildren(...this.terminalDoc.body.childNodes);
   }
 
   public close(): void {
@@ -267,8 +269,8 @@ export class Terminal {
 
   private Clear = ((terminal: Terminal) => {
     return class extends Command {
+      static override commandName: string = "clear";
       args: string[] | undefined = undefined;
-      commandName: string = "clear";
       result: CommandResult = {
         result: null,
       };
@@ -292,7 +294,7 @@ export class Terminal {
   private Exit = ((terminal: Terminal) => {
     return class extends Command {
       args: string[] | undefined = undefined;
-      commandName: string = "exit";
+      static commandName: string = "exit";
       result: CommandResult = {
         result: null,
       };
