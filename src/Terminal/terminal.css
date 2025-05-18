@@ -1,9 +1,21 @@
 @import url('https://fonts.googleapis.com/css2?family=Source+Code+Pro:ital,wght@0,200..900;1,200..900&display=swap');
 
-:root {
-  --light-gray: #f2f2f2;
-  --dark-gray: #b3b3b3;
-  --caret-color: #000;
+@media(prefers-color-scheme: light) {
+  :root {
+    --bg: #f2f2f2;
+    --bg-2: #b3b3b3;
+    --fr: #2f2f2f;
+    --fr-2: #828282;
+  }
+}
+
+@media(prefers-color-scheme: dark){
+  :root {
+    --bg: #2f2f2f;
+    --bg-2: #606060;
+    --fr: #b3b3b3;
+    --fr-2: #f2f2f2;
+  }
 }
 
 :root {
@@ -29,13 +41,13 @@ ul#history{
 }
 
 ul#history > li{
-  color: var(--dark-gray);
+  color: var(--fr-2);
 }
 
 ul#history > li > div.command_wrap{
   display: flex;
   gap: 0.5em;
-  color: var(--dark-gray);
+  color: var(--fr);
 }
 
 div.command {
@@ -46,11 +58,11 @@ div.command {
 ul#history > li > div.command_wrap{
   display: flex;
   gap: 0.5em;
-  color: var(--dark-gray);
+  color: var(--fr-2);
 }
 
 ul#history > li > div.result {
-  color: black;
+  color: var(--fr);
   overflow-wrap: break-word;
   min-height: 1em;
 }
@@ -65,13 +77,17 @@ div.command_input {
   font-family: "Source Code Pro", monospace;
   font-weight: 100;
   gap: 0.5em;
-  background-color: var(--light-gray);
+  background-color: var(--bg);
   z-index: 1;
 }
 
 div.command_input.hidden{
   background-color: #0000;
   z-index: 0;
+}
+
+div.command_input .prompt{
+  color: var(--fr);
 }
 
 div.command_input > #command {
@@ -82,7 +98,8 @@ div.command_input > #command {
   flex-wrap: wrap;
   width: 100%;
   cursor: text;
-  background-color: var(--light-gray);
+  color: var(--fr);
+  background-color: var(--bg);
 }
 
 #command_input {
@@ -100,14 +117,14 @@ div.command_input > #command > span {
 }
 
 div.command_input > #command > span.active {
-  background-color: var(--caret-color);
+  background-color: var(--fr);
   animation: blink 1s steps(4) infinite;
   color: #fff;
 }
 
 @keyframes blink {
   0% { 
-    background-color: var(--caret-color);
+    background-color: var(--fr);
    }
   50% { 
     background-color: #0000;
