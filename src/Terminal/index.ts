@@ -328,7 +328,6 @@ export class Terminal {
       }
 
       exec(): this {
-        this.terminal.clearHistory();
         const commandIndex = this.terminal.commands;
         const commandIndexStr = Object.keys(commandIndex).join("\n");
 
