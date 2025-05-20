@@ -22,7 +22,7 @@
     --caret-pos: 0;
 }
 
-div#terminal_wrap{
+div#rfpl_wrap{
   position: relative;
   width: 100%;
   height: 100%;
