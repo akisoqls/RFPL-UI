@@ -1,6 +1,6 @@
-import "./terminal.css";
+import "./rfpl-ui.css";
 import { Command, type CommandResult } from "./Command";
-import html from "./terminal.html?raw";
+import html from "./rfpl-ui.html?raw";
 import { default as commandIndex } from "./commands/index";
 
 type CalledCommand = {
@@ -8,13 +8,13 @@ type CalledCommand = {
   result?: CommandResult;
 };
 
-export class Terminal {
-  public terminal: string = html;
+export class RFPLUI {
+  public rfplBaseHtmlString: string = html;
 
   public commands: Record<string, typeof Command> = commandIndex;
   public metaCommands: Record<string, typeof Command>;
 
-  private terminalDoc: Document;
+  private rfplBaseHtml: Document;
   private commandDisplay: HTMLDivElement;
   private input: HTMLInputElement;
   private charTemplate: HTMLTemplateElement;
@@ -27,12 +27,12 @@ export class Terminal {
 
   constructor() {
     const DP = new DOMParser();
-    this.terminalDoc = DP.parseFromString(html, "text/html");
+    this.rfplBaseHtml = DP.parseFromString(this.rfplBaseHtmlString, "text/html");
 
-    const commandDisplay = this.terminalDoc.querySelector<HTMLDivElement>("div#command");
-    const input = this.terminalDoc.querySelector<HTMLInputElement>("input#command_input");
+    const commandDisplay = this.rfplBaseHtml.querySelector<HTMLDivElement>("div#command");
+    const input = this.rfplBaseHtml.querySelector<HTMLInputElement>("input#command_input");
     const charTemplate =
-      this.terminalDoc.querySelector<HTMLTemplateElement>("template#command_char");
+      this.rfplBaseHtml.querySelector<HTMLTemplateElement>("template#command_char");
     if (!input || !commandDisplay || !charTemplate || !("content" in charTemplate)) {
       throw new Error("");
     }
@@ -248,7 +248,7 @@ export class Terminal {
     const content = resultHtml.cloneNode(true) as DocumentFragment;
     const scripts = Array.from(content.querySelectorAll<HTMLScriptElement>("script"));
     scripts.forEach((oldScript) => {
-      const newScript = this.terminalDoc.createElement("script");
+      const newScript = this.rfplBaseHtml.createElement("script");
       if (oldScript.src) {
         newScript.src = oldScript.src;
       } else {
@@ -273,7 +273,7 @@ export class Terminal {
 
   public open(): void {
     if (!this.root) throw new Error();
-    this.root.replaceChildren(...this.terminalDoc.body.childNodes);
+    this.root.replaceChildren(...this.rfplBaseHtml.body.childNodes);
     this.appendHistory({
       command: [],
       result: {
@@ -290,21 +290,21 @@ export class Terminal {
     this.root.querySelectorAll("*").forEach((element) => element.remove());
   }
 
-  private Clear = ((terminal: Terminal) => {
+  private Clear = ((rfpl: RFPLUI) => {
     return class extends Command {
       static override commandName: string = "clear";
       args: string[] | undefined = undefined;
       result: CommandResult = {
         result: null,
       };
-      terminal: Terminal = terminal;
+      rfpl: RFPLUI = rfpl;
 
       constructor() {
         super();
       }
 
       exec(): this {
-        this.terminal.clearHistory();
+        this.rfpl.clearHistory();
         this.result = {
           skipHistory: true,
           result: null,
@@ -314,21 +314,21 @@ export class Terminal {
     };
   })(this);
 
-  private OutCommandIndex = ((terminal: Terminal) => {
+  private OutCommandIndex = ((rfpl: RFPLUI) => {
     return class extends Command {
       static override commandName: string = "index";
       args: string[] | undefined = undefined;
       result: CommandResult = {
         result: null,
       };
-      terminal: Terminal = terminal;
+      rfpl: RFPLUI = rfpl;
 
       constructor() {
         super();
       }
 
       exec(): this {
-        const commandIndex = this.terminal.commands;
+        const commandIndex = this.rfpl.commands;
         const commandIndexStr = Object.keys(commandIndex).join("\n");
 
         this.result = {
@@ -342,21 +342,20 @@ export class Terminal {
     };
   })(this);
 
-  private Exit = ((terminal: Terminal) => {
+  private Exit = ((rfpl: RFPLUI) => {
     return class extends Command {
       args: string[] | undefined = undefined;
       static commandName: string = "exit";
       result: CommandResult = {
         result: null,
       };
-      terminal: Terminal = terminal;
 
       constructor() {
         super();
       }
 
       exec(): this {
-        terminal.close();
+        rfpl.close();
         this.result = {
           skipHistory: true,
           result: null,

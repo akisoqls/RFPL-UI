@@ -1,9 +1,9 @@
 import "the-new-css-reset/css/reset.css";
 import "./style.css";
-import { Terminal } from "./Terminal";
+import { RFPLUI } from "./RFPL-UI";
 
-const terminal = new Terminal();
-const terminalRoot = document.querySelector<HTMLElement>("#terminal");
-if (terminalRoot) {
-  terminal.setWelcomeMessage(`Welcome to ${window.location.host}!`).setRoot(terminalRoot).open();
+const rfpl = new RFPLUI();
+const rfplRoot = document.querySelector<HTMLElement>("#rfpl");
+if (rfplRoot) {
+  rfpl.setWelcomeMessage(`Welcome to ${window.location.host}!`).setRoot(rfplRoot).open();
 }
