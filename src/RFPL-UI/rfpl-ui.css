@@ -1,6 +1,6 @@
-@import url('https://fonts.googleapis.com/css2?family=Source+Code+Pro:ital,wght@0,200..900;1,200..900&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Source+Code+Pro:ital,wght@0,200..900;1,200..900&display=swap");
 
-@media(prefers-color-scheme: light) {
+@media (prefers-color-scheme: light) {
   :root {
     --bg: #f2f2f2;
     --bg-2: #b3b3b3;
@@ -9,7 +9,7 @@
   }
 }
 
-@media(prefers-color-scheme: dark){
+@media (prefers-color-scheme: dark) {
   :root {
     --bg: #2f2f2f;
     --bg-2: #606060;
@@ -19,17 +19,17 @@
 }
 
 :root {
-    --caret-pos: 0;
+  --caret-pos: 0;
 }
 
-div#rfpl_wrap{
+div#rfpl_wrap {
   position: relative;
   width: 100%;
   height: 100%;
   overscroll-behavior-y: none;
 }
 
-ul#history{
+ul#history {
   position: absolute;
   width: 100%;
   left: 0;
@@ -40,11 +40,11 @@ ul#history{
   padding: 0 0 0 0em;
 }
 
-ul#history > li{
+ul#history > li {
   color: var(--fr-2);
 }
 
-ul#history > li > div.command_wrap{
+ul#history > li > div.command_wrap {
   display: flex;
   gap: 0.5em;
   color: var(--fr);
@@ -55,7 +55,7 @@ div.command {
   overflow-wrap: break-word;
 }
 
-ul#history > li > div.command_wrap{
+ul#history > li > div.command_wrap {
   display: flex;
   gap: 0.5em;
   color: var(--fr-2);
@@ -81,12 +81,12 @@ div.command_input {
   z-index: 1;
 }
 
-div.command_input.hidden{
+div.command_input.hidden {
   background-color: #0000;
   z-index: 0;
 }
 
-div.command_input .prompt{
+div.command_input .prompt {
   color: var(--fr);
 }
 
@@ -123,10 +123,11 @@ div.command_input > #command > span.active {
 }
 
 @keyframes blink {
-  0% { 
+  0% {
     background-color: var(--fr);
-   }
-  50% { 
+  }
+
+  50% {
     background-color: #0000;
-   }
+  }
 }
