@@ -2,7 +2,7 @@ import { Echo } from "./Echo";
 import { Time } from "./Time";
 import { None } from "./None";
 import { Fetch } from "./Fetch";
-import { Call } from "./call";
+import { Call } from "./Call";
 
 const commands = {
   [Echo.commandName]: Echo,
