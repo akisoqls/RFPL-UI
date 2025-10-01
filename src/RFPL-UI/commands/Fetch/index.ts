@@ -1,8 +1,8 @@
 import type { CommandResult } from "../../Command";
 import { FetchCommand } from "../../Command/fetch";
 
-export class FetchTest extends FetchCommand {
-  static commandName: string = "fetchtest";
+export class Fetch extends FetchCommand {
+  static commandName: string = "fetch";
   args: string[] | undefined;
   result: CommandResult = {
     result: null,
@@ -15,7 +15,7 @@ export class FetchTest extends FetchCommand {
   }
 
   public async exec(): Promise<this> {
-    const testRes = await fetch("/test/test.html");
+    const testRes = await fetch("/");
     const htmlText = await testRes.text();
 
     this.htmlElement.innerHTML = htmlText;
